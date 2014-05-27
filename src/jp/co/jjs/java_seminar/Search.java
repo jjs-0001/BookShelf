@@ -76,11 +76,11 @@ public class Search extends HttpServlet {
             e.printStackTrace();
         }
 
-        if(bookList.size() == 0){
+        if (bookList.size() == 0) {
             RequestDispatcher dispatcher = request
                     .getRequestDispatcher("WEB-INF/jsp/notfound.jsp");
             dispatcher.forward(request, response);
-        }else{
+        } else {
             request.setAttribute("bookList", bookList);
             RequestDispatcher dispatcher = request
                     .getRequestDispatcher("WEB-INF/jsp/result.jsp");

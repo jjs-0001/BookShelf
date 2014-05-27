@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.annotation.Resource;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,7 +20,7 @@ import javax.sql.DataSource;
  */
 @WebServlet("/Insert")
 public class Insert extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Resource(name = "jdbc/crud")
     private DataSource ds;
@@ -32,26 +33,30 @@ public class Insert extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-	}
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    protected void doGet(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
+        // TODO Auto-generated method stub
+    }
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    /**
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    protected void doPost(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
 
-	    String title = request.getParameter("title");
-	    String isbn = request.getParameter("isbn");
-	    String writer = request.getParameter("writer");
-	    String publisher = request.getParameter("publisher");
-	    int price = Integer.parseInt(request.getParameter("price"));
-	    int i = 1;
+        String title = request.getParameter("title");
+        String isbn = request.getParameter("isbn");
+        String writer = request.getParameter("writer");
+        String publisher = request.getParameter("publisher");
+        int price = Integer.parseInt(request.getParameter("price"));
+        int i = 1;
 
-	    try (Connection con = ds.getConnection();
+        try (Connection con = ds.getConnection();
                 PreparedStatement ps = con
                         .prepareStatement("SELECT MAX(ID) FROM BOOKSHELF")) {
             try (ResultSet rs = ps.executeQuery()) {
@@ -63,8 +68,7 @@ public class Insert extends HttpServlet {
             e.printStackTrace();
         }
 
-
-	    try (Connection con = ds.getConnection();
+        try (Connection con = ds.getConnection();
                 PreparedStatement ps = con
                         .prepareStatement("INSERT INTO BOOKSHELF VALUES(?, ?, ?, ?, ?, ?);")) {
             ps.setInt(1, i + 1);
@@ -78,6 +82,17 @@ public class Insert extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-	}
+
+        request.setAttribute("id", i + 1);
+        request.setAttribute("title", title);
+        request.setAttribute("isbn", isbn);
+        request.setAttribute("writer", writer);
+        request.setAttribute("publisher", publisher);
+        request.setAttribute("price", price);
+
+        RequestDispatcher dispatcher = request
+                .getRequestDispatcher("WEB-INF/jsp/insert.jsp");
+        dispatcher.forward(request, response);
+    }
 
 }

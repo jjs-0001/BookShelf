@@ -2,7 +2,7 @@ package jp.co.jjs.java_seminar.model;
 
 import java.io.Serializable;
 
-public class Book implements Serializable{
+public class Book implements Serializable {
 
     private int id = 0;
     private String name = "";
@@ -11,7 +11,7 @@ public class Book implements Serializable{
     private String publisher = "";
     private int price = 0;
 
-    public Book(){
+    public Book() {
 
     }
 
@@ -62,6 +62,5 @@ public class Book implements Serializable{
     public void setPrice(int price) {
         this.price = price;
     }
-
 
 }
