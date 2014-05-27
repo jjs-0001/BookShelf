@@ -1,21 +1,16 @@
 package jp.co.jjs.java_seminar;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javax.annotation.Resource;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
 
+import jp.co.jjs.java_seminar.dao.BookShelfDAO;
 import jp.co.jjs.java_seminar.model.Book;
 
 /**
@@ -24,9 +19,6 @@ import jp.co.jjs.java_seminar.model.Book;
 @WebServlet("/Search")
 public class Search extends HttpServlet {
     private static final long serialVersionUID = 1L;
-
-    @Resource(name = "jdbc/crud")
-    private DataSource ds;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -56,25 +48,8 @@ public class Search extends HttpServlet {
 
         String bookname = request.getParameter("bookname");
 
-        try (Connection con = ds.getConnection();
-                PreparedStatement ps = con
-                        .prepareStatement("SELECT * FROM BOOKSHELF WHERE TITLE LIKE ?")) {
-            ps.setString(1, "%" + bookname + "%");
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Book book = new Book();
-                    book.setId(rs.getInt("ID"));
-                    book.setName(rs.getString("TITLE"));
-                    book.setIsbn(rs.getString("ISBN"));
-                    book.setWriter(rs.getString("WRITER"));
-                    book.setPublisher(rs.getString("PUBLISHER"));
-                    book.setPrice(rs.getInt("PRICE"));
-                    bookList.add(book);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        BookShelfDAO dao = new BookShelfDAO();
+        bookList = dao.getBooks(bookname);
 
         if (bookList.size() == 0) {
             RequestDispatcher dispatcher = request
